@@ -1,0 +1,20 @@
+{
+  "name": "rebels-starter-rn",
+  "version": "1.0.0",
+  "description": "Make simple setup new project with starter kit",
+  "main": "index.js",
+  "bin": "index.js",
+  "author": "M-Julius",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "ejs": "^3.1.6",
+    "inquirer": "^8.2.1",
+    "shelljs": "^0.8.5",
+    "yargs": "^17.3.1"
+  },
+  "devDependencies": {}
+}
