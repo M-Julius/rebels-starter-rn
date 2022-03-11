@@ -55,6 +55,7 @@ const DEFAULT_DEPEDENCY = [
   "redux-thunk",
   "reselect",
 ].join(" ");
+const DEV_DEFAULT_DEPEDENCY = ["reactotron-react-native", "reactotron-redux"].join(' ');
 
 console.log(chalk.red("** Rebelworks Starter Project React Native **"));
 inquirer.prompt(QUESTIONS).then((answers) => {
@@ -159,14 +160,14 @@ function addDependencyPackage(options) {
      * create a command for adding the pacakges
      * check with user given parameter and add them in package list
      */
-    cmd = `yarn add ${DEFAULT_DEPEDENCY}`;
+    cmd = `yarn add ${DEFAULT_DEPEDENCY} && yarn add --dev ${DEV_DEFAULT_DEPEDENCY}`;
   } else if (shell.which("npm")) {
     /**
      * this is for npm
      * create a command for adding the pacakges
      * check with user given parameter and add them in package list
      */
-    cmd = `npm install --save ${DEFAULT_DEPEDENCY}`;
+    cmd = `npm install --save ${DEFAULT_DEPEDENCY} && npm install --save-dev ${DEV_DEFAULT_DEPEDENCY}`;
   }
   /**
    * Execute the shell command
@@ -200,7 +201,7 @@ function copyStarterKit(options) {
   // the target path
   const tartgetPath = path.join(CURR_DIR, options.projectName);
 
-  shell.cp("-rf", `${rootApp}/template/*`, tartgetPath);
+  shell.cp("-rf", `${rootApp}/src/react-native-starter/js/*`, tartgetPath);
   shell.mv("_eslintrc.js", ".eslintrc.js");
   shell.mv("_gitignore", ".gitignore");
   console.log(chalk.green("Starterkit project is copied!"));
@@ -217,7 +218,7 @@ function changeBundleIdentifier(options) {
   // move to target path using shell command
   shell.cd(tartgetPath);
 
-  //initialize the command variable
+  // initialize the command variable
   let cmd = "";
 
   /**
