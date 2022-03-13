@@ -1,0 +1,21 @@
+import { fromJS } from 'immutable';
+
+import { Dispatches } from 'consts';
+
+/* Direct mutation of reducer state is prohibited.
+Therefore, we must assign a new object where it takes a copy of our current state.
+Immutable.JS have been designed to overcome the issues with immutability inherent within JavaScript,
+providing all the benefits of immutability with the performance your app requires. */
+
+const initialState = fromJS({
+});
+
+export default (state = initialState, action) => {
+	switch (action.type) {
+		// case Dispatches.SOME_ACTION:
+		//   return state.set('name_state', fromJS(action.payload));
+
+		default:
+			return state;
+	}
+};
