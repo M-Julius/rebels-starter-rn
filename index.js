@@ -22,6 +22,11 @@ const args = process.argv.slice(2);
 // get current directory
 const CURR_DIR = process.cwd();
 
+// get the root app path
+const ROOT_APP = path.resolve(__dirname);
+
+
+// startup when called this index
 function main() {
   if (args.length !== 0) {
     runGenerator();
@@ -30,6 +35,7 @@ function main() {
   }
 }
 
+// prompt all questions
 function promptQuestion() {
   console.log(chalk.red("** Rebelworks Starter Project React Native **"));
   inquirer.prompt(QUESTIONS).then((answers) => {
@@ -184,17 +190,17 @@ function copyStarterKit(options) {
       break;
   }
 
-  // the root app path
-  const rootApp = path.resolve(__dirname);
-
   // the target path
   const tartgetPath = path.join(CURR_DIR, options.projectName);
 
+  // copy all folder templates to project
   shell.cp(
     "-rf",
-    `${rootApp}/src/templates/react-native-starter/${template}/*`,
+    `${ROOT_APP}/src/templates/react-native-starter/${template}/*`,
     tartgetPath
   );
+
+  // in the templates folder there is no dot file, you can change the name, via the command below
   shell.mv("_eslintrc.js", ".eslintrc.js");
   shell.mv("_gitignore", ".gitignore");
   console.log(chalk.green("Starterkit project is copied!"));
