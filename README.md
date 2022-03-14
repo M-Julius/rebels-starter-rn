@@ -1,7 +1,19 @@
 # rebels-starter-rn
 StarterKit and generator project RN
+
+# Installation & Update
+* use npm
+
+    * ```$ npm install -g rebels-starter-rn```
+
+* use yarn
+
+  * ```$ yarn global add rebels-starter-rn```
+
+
 # How to use?
-run this command, for making project with starterkit
+
+You can access it without installing anything globally using ```npx```
 
 ```$ npx rebels-starter-rn```
 
@@ -13,9 +25,9 @@ run this command, for making project with starterkit
 # Generator
 generator options, on root project
 
-options args
+* sample command
 
-```$ npx rebels-starter-rn (-generate | -g | generate)```
+  * ```$ npx rebels-starter-rn (-generate | -g | generate) (args) (NameOfGenerator)```
 
 | Generator    | path dir        | args              |
 |--------------|-----------------|-------------------|
@@ -25,12 +37,12 @@ options args
 
 
 run this generator on root project
-### generate screens
-```$ npx rebels-starter-rn -g (screens | -s) NameOfScreens```
+*  generate screens
+    * ```$ npx rebels-starter-rn -g (screens | -s) NameOfScreens```
 
-### generate components
-```$ npx rebels-starter-rn -g (components | -c) NameOfComponents```
+* generate components
+    * ```$ npx rebels-starter-rn -g (components | -c) NameOfComponents```
 
 
-### generate redux
-```$ npx rebels-starter-rn -g (redux | -r) NameOfRedux```
+* generate redux
+    * ```$ npx rebels-starter-rn -g (redux | -r) NameOfRedux```
