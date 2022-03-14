@@ -88,9 +88,7 @@ function writeFile({ fromFile, outFile }) {
  * @param {namePath} param
  */
 function getOutputDir(namePath) {
-  // when output path source using custom name with namePath
-  const typePath = namePath ? namePath : type;
-  const outputDir = `${CURR_DIR}/src/${typePath}/${toPascalCase(name)}`;
+  const outputDir = `${CURR_DIR}/src/${namePath}/${toPascalCase(name)}`;
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
@@ -100,7 +98,7 @@ function getOutputDir(namePath) {
 
 // to generate screens
 function generateScreen() {
-  const outputDir = getOutputDir();
+  const outputDir = getOutputDir('screens');
   const outputIndex = `${outputDir}/index.${getExtensionsFile(true)}`;
   const outputStyle = `${outputDir}/styles.${getExtensionsFile()}`;
 
@@ -119,7 +117,7 @@ function generateScreen() {
 
 // to generate components
 function generateComponent() {
-  const outputDir = getOutputDir();
+  const outputDir = getOutputDir('components');
   const outputIndex = `${outputDir}/index.${getExtensionsFile(true)}`;
   const outputStyle = `${outputDir}/styles.${getExtensionsFile()}`;
 
