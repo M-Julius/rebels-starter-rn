@@ -6,6 +6,7 @@ const path = require("path");
 const shell = require("shelljs");
 const chalk = require("chalk");
 const yargs = require("yargs");
+const fs = require("fs");
 
 // local importing module
 const { runGenerator } = require("./src/generator");
@@ -14,6 +15,7 @@ const {
   DEV_DEFAULT_DEPEDENCY,
   QUESTIONS,
   TEMPLATE_LIST,
+  JSON_SCRIPT,
 } = require("./src/constants");
 
 // argument from other function
@@ -24,7 +26,6 @@ const CURR_DIR = process.cwd();
 
 // get the root app path
 const ROOT_APP = path.resolve(__dirname);
-
 
 // startup when called this index
 function main() {
@@ -68,6 +69,11 @@ function promptQuestion() {
        * Pass the project name to this function
        */
       copyStarterKit({ projectName, choicesTemplate });
+
+      /**
+       * After the process of copy starter kit, lets write scripts to package.json
+       */
+      writeScriptsJson();
 
       /**
        * After the process of adding dependency, change the bundle identifier as given.
@@ -204,6 +210,23 @@ function copyStarterKit(options) {
   shell.mv("_eslintrc.js", ".eslintrc.js");
   shell.mv("_gitignore", ".gitignore");
   console.log(chalk.green("Starterkit project is copied!"));
+}
+
+/**
+ * This function is used to write scripts to package.json file.
+ */
+function writeScriptsJson() {
+  // read package json
+  let packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+
+  // each all scripts for write to packageJson
+  Object.keys(JSON_SCRIPT).forEach((key) => {
+    // append scripts
+    packageJson.scripts[key] = JSON_SCRIPT[key];
+  });
+
+  // rewrite file package.json
+  fs.writeFileSync("package.json", JSON.stringify(packageJson, null, 2));
 }
 
 /**

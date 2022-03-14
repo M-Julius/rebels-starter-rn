@@ -62,9 +62,17 @@ const QUESTIONS = [
   },
 ];
 
+const JSON_SCRIPT = {
+  "clean:android": "cd android && ./gradlew clean && cd ../",
+  "build:android": "cd android && ./gradlew clean && ./gradlew assembleRelease",
+  "pods:update": "cd ios && pod install --repo-update && cd ..",
+  "gradle:clean": "cd android && ./gradlew clean && cd ..",
+};
+
 module.exports = {
   DEFAULT_DEPEDENCY,
   DEV_DEFAULT_DEPEDENCY,
   QUESTIONS,
   TEMPLATE_LIST,
+  JSON_SCRIPT,
 };
