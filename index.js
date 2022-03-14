@@ -7,113 +7,91 @@ const shell = require("shelljs");
 const chalk = require("chalk");
 const yargs = require("yargs");
 
-/** List of questions to be asked to the person who is trying to use this boilerplate
- * Question asked is projectName, bundle identifier
- */
-const QUESTIONS = [
-  {
-    name: "name",
-    type: "input",
-    message: "Project name:",
-    when: () => !yargs.argv["name"],
-    validate: (input) => {
-      if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-      else
-        return "Project name may only include letters, numbers, underscores and hashes.";
-    },
-  },
-  {
-    name: "bundle",
-    type: "input",
-    message: "Bundle Identifier name:",
-    when: () => !yargs.argv["bundle"],
-    validate: (input) => {
-      if (/^[a-z0-9]+(\.[a-z0-9]+)+$/gi.test(input)) return true;
-      else return "Provide a valid bundle Identifier";
-    },
-  },
-];
+// local importing module
+const { runGenerator } = require("./src/generator");
+const {
+  DEFAULT_DEPEDENCY,
+  DEV_DEFAULT_DEPEDENCY,
+  QUESTIONS,
+  TEMPLATE_LIST,
+} = require("./src/constants");
+
+// argument from other function
+const args = process.argv.slice(2);
 
 // get current directory
 const CURR_DIR = process.cwd();
 
-// set default depedency
-const DEFAULT_DEPEDENCY = [
-  "@react-native-community/async-storage",
-  "@react-native-community/netinfo",
-  "immutable",
-  "lodash",
-  "react-native-gesture-handler",
-  "react-native-modal",
-  "react-native-reanimated",
-  "react-native-router-flux",
-  "react-native-screens",
-  "react-native-vector-icons",
-  "react-redux",
-  "redux",
-  "redux-persist",
-  "redux-thunk",
-  "reselect",
-].join(" ");
-const DEV_DEFAULT_DEPEDENCY = ["reactotron-react-native", "reactotron-redux"].join(' ');
-
-console.log(chalk.red("** Rebelworks Starter Project React Native **"));
-inquirer.prompt(QUESTIONS).then((answers) => {
-  // assigning the object answer
-  answers = Object.assign({}, answers, yargs.argv);
-
-  // get all answers
-  const projectName = answers["name"];
-  const bundleIdentifier = answers["bundle"];
-
-  /**
-   * Start the process of creating a react native project using given project name.
-   */
-  const nativeApp = createNativeApp(projectName);
-
-  /**
-   * After process finished, need to check if there any dependency need to be installed
-   * This condition is checked based on user performance
-   */
-  if (nativeApp) {
-    /**
-     * This function is called here to add the dependency of this project
-     * Passing all values get from user as object to this function
-     */
-    addDependencyPackage({ projectName });
-
-    /**
-     * After the process of adding dependency, copy the starter kit files.
-     * Pass the project name to this function
-     */
-    copyStarterKit({ projectName });
-
-    /**
-     * After the process of adding dependency, change the bundle identifier as given.
-     * Pass the project name and bundle identifier to this function
-     */
-    changeBundleIdentifier({ projectName, bundleIdentifier });
+function main() {
+  if (args.length !== 0) {
+    runGenerator();
+  } else {
+    promptQuestion();
   }
-});
+}
+
+function promptQuestion() {
+  console.log(chalk.red("** Rebelworks Starter Project React Native **"));
+  inquirer.prompt(QUESTIONS).then((answers) => {
+    // assigning the object answer
+    answers = Object.assign({}, answers, yargs.argv);
+
+    // get all answers
+    const projectName = answers["name"];
+    const bundleIdentifier = answers["bundle"];
+    const choicesTemplate = answers["templateList"];
+
+    /**
+     * Start the process of creating a react native project using given project name.
+     */
+    const nativeApp = createNativeApp({ projectName, choicesTemplate });
+
+    /**
+     * After process finished, need to check if there any dependency need to be installed
+     * This condition is checked based on user performance
+     */
+    if (nativeApp) {
+      /**
+       * This function is called here to add the dependency of this project
+       * Passing all values get from user as object to this function
+       */
+      addDependencyPackage({ projectName });
+
+      /**
+       * After the process of adding dependency, copy the starter kit files.
+       * Pass the project name to this function
+       */
+      copyStarterKit({ projectName, choicesTemplate });
+
+      /**
+       * After the process of adding dependency, change the bundle identifier as given.
+       * Pass the project name and bundle identifier to this function
+       */
+      changeBundleIdentifier({ projectName, bundleIdentifier });
+    }
+  });
+}
 
 /**
  * This function is used to create the native app using the projectName given from the user.
  * This function will execute the react native cli to create the project.
  * @param {project name from the user} projectName
  */
-function createNativeApp(projectName) {
+function createNativeApp({ projectName, choicesTemplate }) {
   // initialize the commant object to execute
   let cmd = "";
 
   /**
-   * check the system contains react native
-   * if it contains, set the init command, else return the error to the user to install the react-native-cli
+   * switch the templates list
+   * if it use typescript, set the init command for setup with typescript mode, else setup with default mode javascript
    */
-  if (shell.which("react-native")) {
-    cmd = `react-native init ${projectName}`;
-  } else {
-    console.log(chalk.cyan("React native setup npx..."));
-    cmd = `npx react-native init ${projectName}`;
+  switch (choicesTemplate) {
+    case TEMPLATE_LIST[1]:
+      cmd = `npx react-native init ${projectName} --template react-native-template-typescript`;
+      break;
+    default:
+      cmd = `npx react-native init ${projectName}`;
+      break;
   }
 
   /**
@@ -192,16 +170,31 @@ function addDependencyPackage(options) {
 
 /**
  * This function is used to copy template to root project
- * @param {projectName} options
+ * @param {projectName, choicesTemplate} options
  */
 function copyStarterKit(options) {
+  // switch directory path template
+  let template;
+  switch (options.choicesTemplate) {
+    case TEMPLATE_LIST[1]:
+      template = "ts";
+      break;
+    default:
+      template = "js";
+      break;
+  }
+
   // the root app path
   const rootApp = path.resolve(__dirname);
 
   // the target path
   const tartgetPath = path.join(CURR_DIR, options.projectName);
 
-  shell.cp("-rf", `${rootApp}/src/react-native-starter/js/*`, tartgetPath);
+  shell.cp(
+    "-rf",
+    `${rootApp}/src/templates/react-native-starter/${template}/*`,
+    tartgetPath
+  );
   shell.mv("_eslintrc.js", ".eslintrc.js");
   shell.mv("_gitignore", ".gitignore");
   console.log(chalk.green("Starterkit project is copied!"));
@@ -254,3 +247,5 @@ function changeBundleIdentifier(options) {
   }
   return true;
 }
+
+main();
