@@ -93,16 +93,21 @@ function createNativeApp({ projectName, choicesTemplate }) {
   // initialize the commant object to execute
   let cmd = "";
 
+  // when the system not includes react-native use npx
+  const useNpx = shell.which("react-native") ? "" : "npx ";
+
+  console.log(chalk.cyan("Project is cooking..."));
+
   /**
    * switch the templates list
    * if it use typescript, set the init command for setup with typescript mode, else setup with default mode javascript
    */
   switch (choicesTemplate) {
     case TEMPLATE_LIST[1]:
-      cmd = `npx react-native init ${projectName} --template react-native-template-typescript`;
+      cmd = `${useNpx}react-native init ${projectName} --template react-native-template-typescript`;
       break;
     default:
-      cmd = `npx react-native init ${projectName}`;
+      cmd = `${useNpx}react-native init ${projectName}`;
       break;
   }
 
@@ -140,6 +145,9 @@ function addDependencyPackage(options) {
   // set the command
   let cmd = "";
 
+  // when the system not includes react-native use npx
+  const useNpx = shell.which("react-native") ? "" : "npx ";
+
   /**
    * check the system contains yarn
    * if not install with npm, else add the packages using yarn
@@ -175,7 +183,7 @@ function addDependencyPackage(options) {
    * Execute the linking dependency
    * This need to be done,otherwise app will not be installed while running
    */
-  shell.exec("npx react-native link");
+  shell.exec(`${useNpx}react-native link`);
 
   return true;
 }
@@ -199,7 +207,7 @@ function copyStarterKit(options) {
   // the target path
   const tartgetPath = path.join(CURR_DIR, options.projectName);
 
-  // copy all folder templates to project
+  // copy all folder templates to root project
   shell.cp(
     "-rf",
     `${ROOT_APP}/src/templates/react-native-starter/${template}/*`,
@@ -219,7 +227,7 @@ function writeScriptsJson() {
   // read package json
   let packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
-  // each all scripts for write to packageJson
+  // every script from configuration is rewritten to packageJson
   Object.keys(JSON_SCRIPT).forEach((key) => {
     // append scripts
     packageJson.scripts[key] = JSON_SCRIPT[key];
@@ -243,16 +251,16 @@ function changeBundleIdentifier(options) {
   // initialize the command variable
   let cmd = "";
 
+  // when the system not includes react-native-rename use npx
+  const useNpx = shell.which("react-native-rename") ? "" : "npx ";
+
   /**
    * check the react-native-rename package is installed globally in user system.
    * If not, install it using yarn and change the bundle identifier
    */
-  if (shell.which("react-native-rename")) {
-    //set the command to change bundle identifier
-    cmd = `react-native-rename  "${options.projectName}" -b ${options.bundleIdentifier}`;
-  } else {
-    cmd = `npx react-native-rename "${options.projectName}" -b ${options.bundleIdentifier}`;
-  }
+
+  //set the command to change bundle identifier
+  cmd = `${useNpx}react-native-rename  "${options.projectName}" -b ${options.bundleIdentifier}`;
 
   /**
    * execute the command
