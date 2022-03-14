@@ -58,7 +58,7 @@ const QUESTIONS = [
     type: "list",
     message: "Choices template setup project",
     choices: TEMPLATE_LIST,
-    when: () => !yargs.argv["languages"],
+    when: () => !yargs.argv["templateList"],
   },
 ];
 
