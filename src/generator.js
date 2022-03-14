@@ -51,7 +51,7 @@ function runGenerator() {
     } else {
       console.log(
         chalk.red(
-          "Please select option type generator screens, components, redux"
+          "Please select option type generator screens (-s), components (-c), redux (-r)"
         )
       );
     }
